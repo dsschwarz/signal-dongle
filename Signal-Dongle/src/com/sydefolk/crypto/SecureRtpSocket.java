@@ -52,7 +52,12 @@ public class SecureRtpSocket {
   }
 
   public HandshakePacket receiveHandshakePacket(boolean verifyCRC) throws IOException {
-    RtpPacket barePacket = socket.receive(RtpPacket.class);
+    RtpPacket barePacket = null;
+    try {
+      barePacket = socket.receive();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     if (barePacket == null)
       return null;

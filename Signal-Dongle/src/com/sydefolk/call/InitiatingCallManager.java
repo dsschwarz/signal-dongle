@@ -42,23 +42,23 @@ public class InitiatingCallManager extends CallManager {
 
   private final byte[] zid;
 
-  public InitiatingCallManager(byte[] zid, DataGrahamSocket dataGrahamSocket)
+  public InitiatingCallManager(byte[] zid, CustomSocket customSocket)
   {
     super("InitiatingCallManager Thread");
     this.zid            = zid;
-      this.dataGrahamSocket = dataGrahamSocket;
+    this.customSocket = customSocket;
   }
 
   @Override
   public void run() {
     try {
-        customSocket = new CustomSocket(dataGrahamSocket);
         secureSocket  = new SecureRtpSocket(customSocket);
 
         zrtpSocket    = new ZRTPInitiatorSocket(secureSocket, zid);
 
         super.run();
     } catch( RuntimeException e ) {
+      e.printStackTrace();
     }
   }
 

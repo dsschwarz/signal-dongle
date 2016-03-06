@@ -49,7 +49,6 @@ public abstract class CallManager extends Thread {
 
   protected ZRTPSocket        zrtpSocket;
   protected CustomSocket      customSocket;
-  protected DataGrahamSocket  dataGrahamSocket;
   protected SecureRtpSocket   secureSocket;
 
   public CallManager(String threadName)

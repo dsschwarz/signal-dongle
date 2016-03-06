@@ -1,8 +1,19 @@
 package com.sydefolk;
 
-public class DataGrahamSocket {
-    public void send(byte[] data) {
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class DataGrahamSocket {
+    byte[] dataToSendTest = null;
+    final Object lock = new Object();
+
+    public synchronized void send(byte[] data) {
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "DataGraham - Sending packet");
+        dataToSendTest = data;
+        synchronized (lock) {
+            lock.notify();
+        }
     }
 
     /**
@@ -10,11 +21,13 @@ public class DataGrahamSocket {
      * @return
      */
     public byte[] receive() {
-        try {
-            wait(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return dataToSendTest;
     }
 }
