@@ -6,7 +6,7 @@ package com.sydefolk;
 public class Main {
   public static void main(String [] args) throws InterruptedException
   {
-    DataGrahamSocket dataGrahamSocket = new DataGrahamSocket();
+    FakeDataGrahamSocket dataGrahamSocket = new FakeDataGrahamSocket();
     CallOrchestration callOrchestration = new CallOrchestration(dataGrahamSocket);
 
 //    Thread.sleep(2000);

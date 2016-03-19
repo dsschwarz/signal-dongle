@@ -7,14 +7,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CustomSocket {
-    DataGrahamSocket dataGrahamSocket;
+    FakeDataGrahamSocket dataGrahamSocket;
     final Object lock = new Object();
     RtpPacket latestData;
 
     Callback initiatorCallback = Callback.emptyCallback();
     Callback respondCallback = Callback.emptyCallback();
 
-    public CustomSocket(DataGrahamSocket socket) {
+    public CustomSocket(FakeDataGrahamSocket socket) {
         dataGrahamSocket = socket;
         (new Thread() {
             @Override

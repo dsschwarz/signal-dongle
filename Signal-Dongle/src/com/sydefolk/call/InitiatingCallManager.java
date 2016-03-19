@@ -18,15 +18,12 @@
 package com.sydefolk.call;
 
 import com.sydefolk.CustomSocket;
-import com.sydefolk.DataGrahamSocket;
 import com.sydefolk.audio.AudioException;
 import com.sydefolk.audio.CallAudioManager;
 import com.sydefolk.crypto.SecureRtpSocket;
 import com.sydefolk.crypto.zrtp.MasterSecret;
 import com.sydefolk.crypto.zrtp.ZRTPInitiatorSocket;
-import com.sydefolk.network.RtpSocket;
 
-import java.net.DatagramSocket;
 import java.net.SocketException;
 
 /**

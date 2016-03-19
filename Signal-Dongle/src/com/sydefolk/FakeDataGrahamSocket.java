@@ -4,7 +4,7 @@ package com.sydefolk;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DataGrahamSocket {
+public class FakeDataGrahamSocket {
     byte[] dataToSendTest = null;
     final Object lock = new Object();
 

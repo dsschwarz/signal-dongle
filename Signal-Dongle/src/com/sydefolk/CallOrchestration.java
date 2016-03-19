@@ -17,7 +17,7 @@ public class CallOrchestration {
     protected CustomSocket      customSocket;
     private CallManager currentCallManager;
 
-    public CallOrchestration(DataGrahamSocket dataGrahamSocket) {
+    public CallOrchestration(FakeDataGrahamSocket dataGrahamSocket) {
         try {
             this.zid        = new byte[12];
             customSocket = new CustomSocket(dataGrahamSocket);

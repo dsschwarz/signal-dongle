@@ -18,7 +18,6 @@
 package com.sydefolk.call;
 
 import com.sydefolk.CustomSocket;
-import com.sydefolk.DataGrahamSocket;
 import com.sydefolk.audio.AudioException;
 import com.sydefolk.audio.CallAudioManager;
 import com.sydefolk.crypto.SecureRtpSocket;

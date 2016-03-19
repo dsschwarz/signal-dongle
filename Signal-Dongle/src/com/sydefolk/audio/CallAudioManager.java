@@ -1,11 +1,10 @@
 package com.sydefolk.audio;
 
+import com.audiointerface.audio.AudioInput;
+import com.audiointerface.audio.AudioOutput;
 import com.sydefolk.CustomSocket;
-import com.sydefolk.audio.adapter.AudioInput;
-import com.sydefolk.audio.adapter.AudioOutput;
 import com.sydefolk.network.RtpPacket;
 
-import java.io.ByteArrayOutputStream;
 import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
