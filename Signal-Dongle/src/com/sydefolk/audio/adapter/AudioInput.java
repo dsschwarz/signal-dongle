@@ -4,9 +4,13 @@ import javax.sound.sampled.*;
 import java.io.ByteArrayOutputStream;
 
 public class AudioInput {
-	TargetDataLine microphone;
-	Mixer microphoneMixer = null;
-	ByteArrayOutputStream microphoneStream;
+	private TargetDataLine microphone;
+	private Mixer microphoneMixer = null;
+	private Integer packetSize = 200;
+
+	private byte[] latestData = null;
+	private final Object lock = new Object();
+
 
 	public AudioInput(Mixer microphoneMixer) {
 		if (microphoneMixer == null) {
@@ -17,7 +21,14 @@ public class AudioInput {
 		}
 	}
 
-	private void captureMicrophone(){
+	/**
+	 * Specifies the number of bytes to be read at a time from the microphone
+	 */
+	public void setPacketSize(Integer packetSize) {
+		this.packetSize = packetSize;
+	}
+
+	public void captureMicrophone(){
 		AudioFormat audioFormat = AudioFormatHelper.getAudioFormat();
 		DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
 		try {
@@ -27,18 +38,41 @@ public class AudioInput {
 			e.printStackTrace();
 		}
 		microphone.start();
-		Thread captureThread = new CaptureThread();
+		Thread captureThread = new CaptureThread(this);
 		captureThread.start();
 	}
 
-	class CaptureThread extends Thread {
-		byte tempBuffer[] = new byte[10000];
+	public byte[] receive() {
+		synchronized (lock) {
+			try {
+				lock.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return latestData;
+	}
+
+	private void onReceive(byte[] data) {
+		latestData = data;
+		synchronized (lock) {
+			lock.notify();
+		}
+	}
+
+	private class CaptureThread extends Thread {
+		byte tempBuffer[] = new byte[packetSize];
+		AudioInput parent = null;
+
+		public CaptureThread(AudioInput parent) {
+			this.parent = parent;
+		}
+
 		public void run() {
-			microphoneStream = new ByteArrayOutputStream();
 			while (true) {
 				int cnt = microphone.read(tempBuffer,0,tempBuffer.length);
 				if (cnt > 0) {
-					microphoneStream.write(tempBuffer,0,cnt);
+					parent.onReceive(tempBuffer);
 				}
 			}
 //			try {

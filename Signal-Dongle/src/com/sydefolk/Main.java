@@ -9,7 +9,7 @@ public class Main {
     DataGrahamSocket dataGrahamSocket = new DataGrahamSocket();
     CallOrchestration callOrchestration = new CallOrchestration(dataGrahamSocket);
 
-    Thread.sleep(2000);
+//    Thread.sleep(2000);
     callOrchestration.customSocket.initiateCall();
   }
 }

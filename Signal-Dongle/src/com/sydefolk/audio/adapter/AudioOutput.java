@@ -20,6 +20,7 @@ public class AudioOutput {
 
 	public AudioOutput(Mixer speakerMixer) {
 		if (speakerMixer == null) {
+			getMixers();
 			Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
 			this.speakerMixer = AudioSystem.getMixer(mixerInfo[0]);
 		} else {
@@ -27,9 +28,8 @@ public class AudioOutput {
 		}
 	}
 
-	private void outputAudio(ByteArrayOutputStream audioOutputStream){
+	public void outputAudio(byte[] audioData){
 		AudioFormat audioFormat = AudioFormatHelper.getAudioFormat();
-		byte audioData[] = audioOutputStream.toByteArray();
 		InputStream speakerStream = new ByteArrayInputStream(audioData);
 		speakerStream = new AudioInputStream(speakerStream, audioFormat,
 						audioData.length/audioFormat.getFrameSize());
@@ -62,27 +62,27 @@ public class AudioOutput {
 	public static void getMixers(){
 		Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
 		System.out.println("Available mixers:");
-		for	(int cnt = 0; cnt < mixerInfo.length;cnt++) {
-			System.out.println(mixerInfo[cnt].getName());
+		for (Mixer.Info aMixerInfo : mixerInfo) {
+			System.out.println(aMixerInfo.getName());
 		}
 	}
 
-	class PlayThread extends Thread{
-		byte tempBuffer[] = new byte[10000];
-		public void run(){
-			try	{
-				int cnt;
-				while ((cnt=speakerStream.read(tempBuffer, 0, tempBuffer.length)) != -1) {
-					if (cnt > 0) {
-						speaker.write(tempBuffer, 0, cnt);
-					}
-				}
-			} catch (Exception e) {
-				System.out.println(e);
-				System.exit(0);
-			}
-			speaker.drain();
-			speaker.close();
-		}
-	}
+//	class PlayThread extends Thread{
+//		byte tempBuffer[] = new byte[10000];
+//		public void run(){
+//			try	{
+//				int cnt;
+//				while ((cnt=speakerStream.read(tempBuffer, 0, tempBuffer.length)) != -1) {
+//					if (cnt > 0) {
+//						speaker.write(tempBuffer, 0, cnt);
+//					}
+//				}
+//			} catch (Exception e) {
+//				System.out.println(e);
+//				System.exit(0);
+//			}
+//			speaker.drain();
+//			speaker.close();
+//		}
+//	}
 }

@@ -52,7 +52,9 @@ public class CustomSocket {
     }
 
     public RtpPacket receive() throws InterruptedException {
-        lock.wait();
+        synchronized (lock) {
+            lock.wait();
+        }
         return latestData;
     }
 
