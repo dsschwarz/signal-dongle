@@ -5,15 +5,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class FakeDataGrahamSocket {
+    FakeDataGrahamSocket otherSocket = null;
     byte[] dataToSendTest = null;
     final Object lock = new Object();
 
     public synchronized void send(byte[] data) {
         Logger.getLogger(getClass().getName()).log(Level.INFO, "DataGraham - Sending packet");
-        dataToSendTest = data;
-        synchronized (lock) {
-            lock.notify();
-        }
+        otherSocket.pushData(data);
     }
 
     /**
@@ -29,5 +27,20 @@ public class FakeDataGrahamSocket {
             }
         }
         return dataToSendTest;
+    }
+
+  /**
+   * temporary test method, not part of api
+   * @deprecated
+   */
+  public void registerOtherSocket(FakeDataGrahamSocket socket) {
+        this.otherSocket = socket;
+    }
+
+    private void pushData(byte[] data) {
+        this.dataToSendTest = data;
+        synchronized (lock) {
+            lock.notify();
+        }
     }
 }

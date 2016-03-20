@@ -95,8 +95,8 @@ public abstract class ZRTPSocket {
     this.localZid          = localZid;
     this.socket            = socket;
     this.state             = initialState;
-//    this.dh3kKeyPair       = initializeDH3kKeys();
-//    this.ec25KeyPair       = initializeEC25Keys();
+    this.dh3kKeyPair       = initializeDH3kKeys();
+    this.ec25KeyPair       = initializeEC25Keys();
     this.hashChain         = new HashChain();
 
     this.socket.setTimeout(RETRANSMIT_INTERVAL_MILLIS);

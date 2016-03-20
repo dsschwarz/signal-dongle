@@ -23,7 +23,7 @@ public class CallOrchestration {
             customSocket = new CustomSocket(dataGrahamSocket);
 
             customSocket.initiatorCallback = this::initiateCall;
-            customSocket.respondCallback = this::acceptCall;
+            customSocket.respondCallback = this::incomingCall;
 
             SecureRandom.getInstance("SHA1PRNG").nextBytes(zid);
         } catch(NoSuchAlgorithmException e) {
@@ -38,8 +38,13 @@ public class CallOrchestration {
         currentCallManager.start();
     }
 
-    public void acceptCall() {
+    public void incomingCall() {
         currentCallManager = new ResponderCallManager(zid);
         currentCallManager.start();
+    }
+    public void acceptCall() {
+        if (currentCallManager instanceof  ResponderCallManager) {
+            ((ResponderCallManager) currentCallManager).answer(true);
+        }
     }
 }

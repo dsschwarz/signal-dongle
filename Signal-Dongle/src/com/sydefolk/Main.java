@@ -6,10 +6,17 @@ package com.sydefolk;
 public class Main {
   public static void main(String [] args) throws InterruptedException
   {
-    FakeDataGrahamSocket dataGrahamSocket = new FakeDataGrahamSocket();
-    CallOrchestration callOrchestration = new CallOrchestration(dataGrahamSocket);
+    FakeDataGrahamSocket initiatingSocket = new FakeDataGrahamSocket();
+    FakeDataGrahamSocket receivingSocket = new FakeDataGrahamSocket();
 
-//    Thread.sleep(2000);
-    callOrchestration.customSocket.initiateCall();
+    initiatingSocket.registerOtherSocket(receivingSocket);
+    receivingSocket.registerOtherSocket(initiatingSocket);
+
+    CallOrchestration initiatorOrchestration = new CallOrchestration(initiatingSocket);
+    CallOrchestration receiverOrchestration = new CallOrchestration(receivingSocket);
+
+    initiatorOrchestration.initiateCall();
+    receiverOrchestration.incomingCall();
+    receiverOrchestration.acceptCall();
   }
 }

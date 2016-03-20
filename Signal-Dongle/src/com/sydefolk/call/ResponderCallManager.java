@@ -21,6 +21,7 @@ package com.sydefolk.call;
 import com.sydefolk.CustomSocket;
 import com.sydefolk.audio.AudioException;
 import com.sydefolk.audio.CallAudioManager;
+import com.sydefolk.crypto.SecureRtpSocket;
 import com.sydefolk.crypto.zrtp.MasterSecret;
 import com.sydefolk.crypto.zrtp.ZRTPResponderSocket;
 
@@ -52,9 +53,8 @@ public class ResponderCallManager extends CallManager {
       if (!waitForAnswer()) {
         return;
       }
+      secureSocket  = new SecureRtpSocket(customSocket);
 
-//      secureSocket  = new SecureRtpSocket(new RtpSocket(localPort, remoteAddress));
-      // TODO dschwarz: detect legacy header
       zrtpSocket    = new ZRTPResponderSocket(secureSocket, zid, false);
       super.run();
     } catch( RuntimeException e ) {
