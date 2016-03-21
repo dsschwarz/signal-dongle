@@ -6,6 +6,7 @@ import com.sydefolk.CustomSocket;
 import com.sydefolk.network.RtpPacket;
 
 import java.net.SocketException;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,11 +22,14 @@ public class CallAudioManager {
 
     private boolean isSender = false;
 
+    private boolean enableEncryption = false;
+
     public CallAudioManager(CustomSocket socket, boolean isSender, // TODO take out this test variable
                             byte[] senderCipherKey, byte[] senderMacKey, byte[] senderSalt,
                             byte[] receiverCipherKey, byte[] receiverMacKey, byte[] receiverSalt)
             throws SocketException, AudioException
     {
+        Logger.getLogger("CallAudioManager").log(Level.INFO, "Starting audio manager");
         this.socket = socket;
         this.isSender = isSender;
         if (isSender) {
@@ -58,6 +62,9 @@ public class CallAudioManager {
         return packet;
     }
     private RtpPacket decrypt(RtpPacket packet) {
+        if (!enableEncryption) {
+            packet.setPayload(Garble(packet.getPayload()));
+        }
         return packet;
     }
 
@@ -97,6 +104,14 @@ public class CallAudioManager {
                 }
             }
         }
+    }
+
+    public static byte[] Garble(byte[] array){
+        Random rgen = new Random();  // Random number generator
+
+        rgen.nextBytes(array);
+
+        return array;
     }
 
 }

@@ -33,7 +33,7 @@ public class CustomSocket {
         while (true) {
             byte[] data = dataGrahamSocket.receive();
             handleNewMessage(data);
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "Message received!");
+//            Logger.getLogger(getClass().getName()).log(Level.INFO, "Message received!");
             synchronized (lock) {
                 lock.notifyAll();
             }

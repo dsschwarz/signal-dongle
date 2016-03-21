@@ -10,7 +10,7 @@ public class FakeDataGrahamSocket {
     final Object lock = new Object();
 
     public synchronized void send(byte[] data) {
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "DataGraham - Sending packet");
+//        Logger.getLogger(getClass().getName()).log(Level.INFO, "DataGraham - Sending packet");
         otherSocket.pushData(data);
     }
 
@@ -26,7 +26,7 @@ public class FakeDataGrahamSocket {
                 e.printStackTrace();
             }
         }
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "DataGraham - Packet received");
+//        Logger.getLogger(getClass().getName()).log(Level.INFO, "DataGraham - Packet received");
         return dataToSendTest;
     }
 
