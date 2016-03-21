@@ -63,7 +63,7 @@ public class InitiatingCallManager extends CallManager {
   protected void runAudio(CustomSocket socket, MasterSecret masterSecret, boolean muteEnabled)
       throws SocketException, AudioException
   {
-    this.callAudioManager = new CallAudioManager(socket,
+    this.callAudioManager = new CallAudioManager(socket, true,
                                                  masterSecret.getInitiatorSrtpKey(),
                                                  masterSecret.getInitiatorMacKey(),
                                                  masterSecret.getInitiatorSrtpSalt(),

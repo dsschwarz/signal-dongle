@@ -19,15 +19,21 @@ public class CallAudioManager {
     private AudioInput audioInput = null;
     private AudioOutput audioOutput = null;
 
-    public CallAudioManager(CustomSocket socket,
+    private boolean isSender = false;
+
+    public CallAudioManager(CustomSocket socket, boolean isSender, // TODO take out this test variable
                             byte[] senderCipherKey, byte[] senderMacKey, byte[] senderSalt,
                             byte[] receiverCipherKey, byte[] receiverMacKey, byte[] receiverSalt)
             throws SocketException, AudioException
     {
         this.socket = socket;
-        this.audioInput = new AudioInput(null);
-        this.audioOutput = new AudioOutput(null);
-        this.audioInput.captureMicrophone();
+        this.isSender = isSender;
+        if (isSender) {
+            this.audioInput = new AudioInput(null);
+            this.audioInput.captureMicrophone();
+        } else {
+            this.audioOutput = new AudioOutput(null);
+        }
     }
 
     public void setMute(boolean enabled) {
@@ -36,8 +42,11 @@ public class CallAudioManager {
     public void start() throws AudioException {
         this.running = true;
 
-        (new AudioInputThread(this.audioInput)).start();
-        (new AudioOutputThread(this.audioOutput)).start();
+        if (this.isSender) {
+            (new AudioInputThread(this.audioInput)).start();
+        } else {
+            (new AudioOutputThread(this.audioOutput)).start();
+        }
     }
 
     public void terminate() {
