@@ -27,6 +27,7 @@ public class CallAudioManager {
         this.socket = socket;
         this.audioInput = new AudioInput(null);
         this.audioOutput = new AudioOutput(null);
+        this.audioInput.captureMicrophone();
     }
 
     public void setMute(boolean enabled) {
@@ -35,23 +36,8 @@ public class CallAudioManager {
     public void start() throws AudioException {
         this.running = true;
 
-        while(running) {
-            byte[] data = this.audioInput.receive(); // raw audio bytes
-            RtpPacket packet = new RtpPacket(data, data.length);
-            packet = encrypt(packet);
-            socket.send(packet);
-        }
-
-        while (running) {
-            // on receive from phone
-            try {
-                RtpPacket packet = socket.receive();
-                packet = decrypt(packet);
-                this.audioOutput.outputAudio(packet.getPayload());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        (new AudioInputThread(this.audioInput)).start();
+        (new AudioOutputThread(this.audioOutput)).start();
     }
 
     public void terminate() {
@@ -64,6 +50,44 @@ public class CallAudioManager {
     }
     private RtpPacket decrypt(RtpPacket packet) {
         return packet;
+    }
+
+    // listens for audio input, and sends it over the socket
+    private class AudioInputThread extends Thread {
+        AudioInput audioInput = null;
+        public AudioInputThread(AudioInput audioInput) {
+            this.audioInput = audioInput;
+        }
+
+        public void run() {
+            while(running) {
+                byte[] data = this.audioInput.receive(); // raw audio bytes
+                RtpPacket packet = new RtpPacket(data, data.length);
+                packet = encrypt(packet);
+                socket.send(packet);
+            }
+        }
+    }
+
+    // listens for audio input, and sends it over the socket
+    private class AudioOutputThread extends Thread {
+        AudioOutput audioOutput = null;
+        public AudioOutputThread(AudioOutput audioOutput) {
+            this.audioOutput = audioOutput;
+        }
+
+        public void run() {
+            while (running) {
+                // on receive from phone
+                try {
+                    RtpPacket packet = socket.receive();
+                    packet = decrypt(packet);
+                    this.audioOutput.outputAudio(packet.getPayload());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }
