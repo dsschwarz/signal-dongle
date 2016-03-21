@@ -66,6 +66,7 @@ public class RtpSocket {
     try {
       socket.setSoTimeout(timeoutMillis);
     } catch (SocketException e) {
+      e.printStackTrace();
     }
   }
 

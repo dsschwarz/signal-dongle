@@ -42,9 +42,10 @@ public class ResponderCallManager extends CallManager {
 
   private int answer = 0;
 
-  public ResponderCallManager(byte[] zid) {
+  public ResponderCallManager(byte[] zid, CustomSocket customSocket) {
     super("ResponderCallManager Thread");
     this.zid               = zid;
+    this.customSocket = customSocket;
   }
 
   @Override
@@ -58,6 +59,7 @@ public class ResponderCallManager extends CallManager {
       zrtpSocket    = new ZRTPResponderSocket(secureSocket, zid, false);
       super.run();
     } catch( RuntimeException e ) {
+      e.printStackTrace();
     }
   }
 

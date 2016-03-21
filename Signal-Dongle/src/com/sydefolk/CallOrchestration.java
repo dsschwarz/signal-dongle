@@ -39,7 +39,7 @@ public class CallOrchestration {
     }
 
     public void incomingCall() {
-        currentCallManager = new ResponderCallManager(zid);
+        currentCallManager = new ResponderCallManager(zid, customSocket);
         currentCallManager.start();
     }
     public void acceptCall() {

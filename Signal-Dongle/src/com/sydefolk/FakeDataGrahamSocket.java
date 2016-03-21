@@ -26,6 +26,7 @@ public class FakeDataGrahamSocket {
                 e.printStackTrace();
             }
         }
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "DataGraham - Packet received");
         return dataToSendTest;
     }
 

@@ -76,10 +76,8 @@ public abstract class CallManager extends Thread {
         runAudio(customSocket, zrtpSocket.getMasterSecret(), muteEnabled);
       }
 
-    } catch (RecipientUnavailableException rue) {
-    } catch (NegotiationFailedException nfe) {
-    } catch (AudioException e) {
-    } catch (IOException e) {
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 

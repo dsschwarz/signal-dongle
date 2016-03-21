@@ -60,10 +60,10 @@ public class EC25SecretCalculator extends SecretCalculator {
                                                              false);
 
       ECPublicKeySpec keySpec = new ECPublicKeySpec(point, params);
-      KeyFactory keyFactory   = KeyFactory.getInstance("ECDH", "SC");
+      KeyFactory keyFactory   = KeyFactory.getInstance("ECDH", "BC");
       PublicKey publicKey     = keyFactory.generatePublic(keySpec);
 
-      KeyAgreement agreement = KeyAgreement.getInstance("ECDH", "SC");
+      KeyAgreement agreement = KeyAgreement.getInstance("ECDH", "BC");
       agreement.init(localKey.getPrivate());
       agreement.doPhase(publicKey, true);
 

@@ -13,10 +13,6 @@ public class CallAudioManager {
 
     private static final String TAG = CallAudioManager.class.getSimpleName();
 
-    static {
-        System.loadLibrary("redphone-audio");
-    }
-
     private CustomSocket socket = null;
     private Boolean running = false;
 

@@ -70,7 +70,9 @@ public class CustomSocket {
             byte[] data = new byte[packetLength];
             buffer.get(data);
             latestData = new RtpPacket(data, packetLength);
-            lock.notify(); // notify a single receive method that a packet has arrived
+            synchronized (lock) {
+                lock.notify(); // notify a single receive method that a packet has arrived
+            }
         } else if (type == MessageTypes.INITIATE){
             initiatorCallback.doSomething();
         } else if (type == MessageTypes.RESPOND) {
