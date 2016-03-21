@@ -22,7 +22,7 @@ public class CallAudioManager {
 
     private boolean isSender = false;
 
-    private boolean enableEncryption = false;
+    private boolean enableDecryption = true;
 
     public CallAudioManager(CustomSocket socket, boolean isSender, // TODO take out this test variable
                             byte[] senderCipherKey, byte[] senderMacKey, byte[] senderSalt,
@@ -62,7 +62,7 @@ public class CallAudioManager {
         return packet;
     }
     private RtpPacket decrypt(RtpPacket packet) {
-        if (!enableEncryption) {
+        if (!enableDecryption) {
             packet.setPayload(Garble(packet.getPayload()));
         }
         return packet;
