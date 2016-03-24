@@ -3,18 +3,16 @@ package com.sydefolk;
 import com.sydefolk.network.RtpPacket;
 
 import java.nio.ByteBuffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CustomSocket {
-    FakeDataGrahamSocket dataGrahamSocket;
+    ActiveMQDataGrahamSocket dataGrahamSocket;
     final Object lock = new Object();
     RtpPacket latestData;
 
     Callback initiatorCallback = Callback.emptyCallback();
     Callback respondCallback = Callback.emptyCallback();
 
-    public CustomSocket(FakeDataGrahamSocket socket) {
+    public CustomSocket(ActiveMQDataGrahamSocket socket) {
         dataGrahamSocket = socket;
         (new Thread() {
             @Override

@@ -1,22 +1,23 @@
 package com.sydefolk;
 
+import javax.jms.JMSException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Created by dan-s on 06/03/2016.
  */
 public class Main {
   public static void main(String [] args) throws InterruptedException
   {
-    FakeDataGrahamSocket initiatingSocket = new FakeDataGrahamSocket();
-    FakeDataGrahamSocket receivingSocket = new FakeDataGrahamSocket();
+    ActiveMQDataGrahamSocket socket;
+    try {
+      socket = new ActiveMQDataGrahamSocket();
+    } catch (JMSException e) {
+      Logger.getAnonymousLogger().log(Level.INFO, "Failure during socket initialization");
+      return;
+    }
 
-    initiatingSocket.registerOtherSocket(receivingSocket);
-    receivingSocket.registerOtherSocket(initiatingSocket);
-
-    CallOrchestration initiatorOrchestration = new CallOrchestration(initiatingSocket);
-    CallOrchestration receiverOrchestration = new CallOrchestration(receivingSocket);
-
-    initiatorOrchestration.initiateCall();
-    receiverOrchestration.incomingCall();
-    receiverOrchestration.acceptCall();
+    CallOrchestration callOrchestration = new CallOrchestration(socket);
   }
 }

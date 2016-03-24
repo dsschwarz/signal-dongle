@@ -5,7 +5,10 @@ import com.audiointerface.audio.AudioOutput;
 import com.sydefolk.CustomSocket;
 import com.sydefolk.network.RtpPacket;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,10 +22,9 @@ public class CallAudioManager {
 
     private AudioInput audioInput = null;
     private AudioOutput audioOutput = null;
+    private AudioOutput encryptedAudioOutput = null;
 
     private boolean isSender = false;
-
-    private boolean enableDecryption = true;
 
     public CallAudioManager(CustomSocket socket, boolean isSender, // TODO take out this test variable
                             byte[] senderCipherKey, byte[] senderMacKey, byte[] senderSalt,
@@ -36,7 +38,9 @@ public class CallAudioManager {
             this.audioInput = new AudioInput(null);
             this.audioInput.captureMicrophone();
         } else {
-            this.audioOutput = new AudioOutput(null);
+            Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
+            this.encryptedAudioOutput = new AudioOutput(AudioSystem.getMixer(mixerInfo[5]));
+            this.audioOutput = new AudioOutput(AudioSystem.getMixer(mixerInfo[6]));
         }
     }
 
@@ -49,7 +53,7 @@ public class CallAudioManager {
         if (this.isSender) {
             (new AudioInputThread(this.audioInput)).start();
         } else {
-            (new AudioOutputThread(this.audioOutput)).start();
+            (new AudioOutputThread(this.audioOutput, this.encryptedAudioOutput)).start();
         }
     }
 
@@ -62,9 +66,6 @@ public class CallAudioManager {
         return packet;
     }
     private RtpPacket decrypt(RtpPacket packet) {
-        if (!enableDecryption) {
-            packet.setPayload(Garble(packet.getPayload()));
-        }
         return packet;
     }
 
@@ -88,8 +89,10 @@ public class CallAudioManager {
     // listens for audio input, and sends it over the socket
     private class AudioOutputThread extends Thread {
         AudioOutput audioOutput = null;
-        public AudioOutputThread(AudioOutput audioOutput) {
+        AudioOutput encryptedAudioOutput = null;
+        public AudioOutputThread(AudioOutput audioOutput, AudioOutput encryptedAudioOutput) {
             this.audioOutput = audioOutput;
+            this.encryptedAudioOutput = encryptedAudioOutput;
         }
 
         public void run() {
@@ -98,7 +101,11 @@ public class CallAudioManager {
                 try {
                     RtpPacket packet = socket.receive();
                     packet = decrypt(packet);
-                    this.audioOutput.outputAudio(packet.getPayload());
+                    byte[] payload = packet.getPayload();
+                    byte[] backup = Arrays.copyOf(payload, payload.length);
+//                    Garble(backup);
+//                    this.encryptedAudioOutput.outputAudio(backup);
+                    this.audioOutput.outputAudio(payload);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
