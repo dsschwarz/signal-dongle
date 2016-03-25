@@ -1,18 +1,21 @@
 package com.sydefolk;
 
+import com.audiointerface.DataGrahamSocket;
 import com.sydefolk.network.RtpPacket;
 
 import java.nio.ByteBuffer;
 
 public class CustomSocket {
-    ActiveMQDataGrahamSocket dataGrahamSocket;
+    DataGrahamSocket dataGrahamSocket;
     final Object lock = new Object();
     RtpPacket latestData;
 
     Callback initiatorCallback = Callback.emptyCallback();
     Callback respondCallback = Callback.emptyCallback();
+    Callback rejectCallback = Callback.emptyCallback();
+    Callback answerCallback = Callback.emptyCallback();
 
-    public CustomSocket(ActiveMQDataGrahamSocket socket) {
+    public CustomSocket(DataGrahamSocket socket) {
         dataGrahamSocket = socket;
         (new Thread() {
             @Override
@@ -27,6 +30,21 @@ public class CustomSocket {
         dataGrahamSocket.send(data);
     }
 
+    public void respondCall() {
+        byte[] data = ByteBuffer.allocate(2).putShort((short) MessageTypes.RESPOND.ordinal()).array();
+        dataGrahamSocket.send(data);
+    }
+
+    public void answerCall() {
+        byte[] data = ByteBuffer.allocate(2).putShort((short) MessageTypes.ANSWER.ordinal()).array();
+        dataGrahamSocket.send(data);
+    }
+
+    public void rejectCall() {
+        byte[] data = ByteBuffer.allocate(2).putShort((short) MessageTypes.REJECT.ordinal()).array();
+        dataGrahamSocket.send(data);
+    }
+
     private void listen() {
         while (true) {
             byte[] data = dataGrahamSocket.receive();
@@ -38,6 +56,10 @@ public class CustomSocket {
         }
     }
 
+    public void send(byte[] rawData) {
+        send(new RtpPacket(rawData, rawData.length));
+    }
+
     public void send(RtpPacket packet) {
         byte[] data = packet.getPacket();
         short messageType = (short) MessageTypes.PACKET.ordinal();
@@ -47,6 +69,10 @@ public class CustomSocket {
                 .array();
 
         dataGrahamSocket.send(finalMessage);
+    }
+
+    public byte[] receiveBytes() throws InterruptedException {
+        return this.receive().getPayload();
     }
 
     public RtpPacket receive() throws InterruptedException {
@@ -75,6 +101,10 @@ public class CustomSocket {
             initiatorCallback.doSomething();
         } else if (type == MessageTypes.RESPOND) {
             respondCallback.doSomething();
+        } else if (type == MessageTypes.ANSWER) {
+            answerCallback.doSomething();
+        } else if (type == MessageTypes.REJECT) {
+            rejectCallback.doSomething();
         } else {
             new Exception("Unknown message type " + type.toString()).printStackTrace();
         }

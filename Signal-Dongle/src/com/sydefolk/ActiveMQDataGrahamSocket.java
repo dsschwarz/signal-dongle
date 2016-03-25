@@ -1,17 +1,13 @@
 package com.sydefolk;
 
-import javax.jms.BytesMessage;
-import javax.jms.Connection;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import javax.jms.*;
 
 import com.audiointerface.DataGrahamSocket;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.omg.CORBA.OBJ_ADAPTER;
 
-import javax.jms.JMSException;
-import javax.jms.Topic;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Julian on 3/22/2016.
@@ -27,11 +23,19 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
     protected static final String DONGLE_TO_PHONE_TOPIC = "dongle_to_phone";
     protected static final long TIMEOUT = 5000;
 
+    private Message latestMessage = null;
+    final private Object lock;
+
     public ActiveMQDataGrahamSocket() throws JMSException{
         super();
 
         brokerUrl = "";
+        lock = new Object();
         setupActiveMQ();
+        consumer.setMessageListener(message -> {
+            latestMessage = message;
+            lock.notifyAll();
+        });
     }
 
     protected void setupActiveMQ() throws JMSException {
@@ -64,12 +68,21 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
 
     @Override
     public byte[] receive() {
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         try {
-            Message message = consumer.receive();
-            if(message instanceof BytesMessage){
-                byte[] bytes = new byte[(int)((BytesMessage) message).getBodyLength()];
-                ((BytesMessage) message).readBytes(bytes);
+            Logger.getAnonymousLogger().log(Level.INFO, "Received ActiveMQ message");
+            if(latestMessage instanceof BytesMessage){
+                byte[] bytes = new byte[(int)((BytesMessage) latestMessage).getBodyLength()];
+                ((BytesMessage) latestMessage).readBytes(bytes);
                 return bytes;
+            } else {
+                Logger.getAnonymousLogger().log(Level.WARNING, "Wrong message type");
             }
         } catch (JMSException e) {
             e.printStackTrace();

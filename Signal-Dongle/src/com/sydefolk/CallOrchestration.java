@@ -24,6 +24,7 @@ public class CallOrchestration {
 
             customSocket.initiatorCallback = this::initiateCall;
             customSocket.respondCallback = this::incomingCall;
+            customSocket.answerCallback = this::acceptCall;
 
             SecureRandom.getInstance("SHA1PRNG").nextBytes(zid);
         } catch(NoSuchAlgorithmException e) {
