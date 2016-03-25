@@ -1,7 +1,7 @@
 package com.sydefolk.audio;
 
-import com.audiointerface.audio.AudioInput;
-import com.audiointerface.audio.AudioOutput;
+import com.sydefolk.audioIO.AudioInput;
+import com.sydefolk.audioIO.AudioOutput;
 import com.sydefolk.CustomSocket;
 import com.sydefolk.network.RtpPacket;
 

@@ -2,9 +2,7 @@ package com.sydefolk;
 
 import javax.jms.*;
 
-import com.audiointerface.DataGrahamSocket;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.omg.CORBA.OBJ_ADAPTER;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +27,7 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
     public ActiveMQDataGrahamSocket() throws JMSException{
         super();
 
-        brokerUrl = "";
+        brokerUrl = "tcp://192.168.0.187:61616";
         lock = new Object();
         setupActiveMQ();
         consumer.setMessageListener(message -> {
@@ -42,6 +40,7 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
         try {
             ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
             connection = connectionFactory.createConnection();
+            connection.start();
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Topic phoneToDongleTopic = session.createTopic(PHONE_TO_DONGLE_TOPIC);
             Topic dongleToPhoneTopic = session.createTopic(DONGLE_TO_PHONE_TOPIC);
