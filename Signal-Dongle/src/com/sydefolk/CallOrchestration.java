@@ -39,6 +39,7 @@ public class CallOrchestration {
     }
 
     public void incomingCall() {
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Incoming call");
         currentCallManager = new ResponderCallManager(zid, customSocket);
         currentCallManager.start();
     }

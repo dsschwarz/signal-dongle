@@ -25,6 +25,8 @@ import com.sydefolk.crypto.zrtp.MasterSecret;
 import com.sydefolk.crypto.zrtp.ZRTPInitiatorSocket;
 
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Call Manager for the coordination of outgoing calls.  It initiates
@@ -63,6 +65,7 @@ public class InitiatingCallManager extends CallManager {
   protected void runAudio(CustomSocket socket, MasterSecret masterSecret, boolean muteEnabled)
       throws SocketException, AudioException
   {
+    Logger.getAnonymousLogger().log(Level.INFO, "Starting Audio");
     this.callAudioManager = new CallAudioManager(socket, true,
                                                  masterSecret.getInitiatorSrtpKey(),
                                                  masterSecret.getInitiatorMacKey(),
