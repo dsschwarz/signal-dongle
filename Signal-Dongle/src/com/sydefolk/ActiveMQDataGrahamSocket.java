@@ -31,8 +31,14 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
         lock = new Object();
         setupActiveMQ();
         consumer.setMessageListener(message -> {
-            latestMessage = message;
-            lock.notifyAll();
+            try {
+                latestMessage = message;
+                synchronized (lock) {
+                    lock.notifyAll();
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
