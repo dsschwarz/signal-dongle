@@ -316,9 +316,9 @@ public abstract class ZRTPSocket {
         HandshakePacket packet = socket.receiveHandshakePacket(state != EXPECTING_CONFIRM_ACK);
 
         if( packet != null ) {
-//          Log.w("ZRTPSocket", "Received packet: " + (packet != null ? packet.getType() : "null"));
+        	System.out.println("Received packet: " + (packet != null ? packet.getType() : "null"));
         }
-
+        
         if      (packet == null)                                                                       resendPacketIfTimeout();
         else if ((packet.getType().equals(HelloPacket.TYPE))      && (state == EXPECTING_HELLO))       handleHello(packet);
         else if ((packet.getType().equals(HelloAckPacket.TYPE))   && (state == EXPECTING_HELLO_ACK))   handleHelloAck(packet);

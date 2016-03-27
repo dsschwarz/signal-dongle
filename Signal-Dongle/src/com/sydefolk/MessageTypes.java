@@ -1,5 +1,5 @@
 package com.sydefolk;
 
 public enum MessageTypes {
-  INITIATE, RESPOND, PACKET, CALL_CONNECTED
+	INITIATE, RESPOND, PACKET, ANSWER, REJECT, CALL_CONNECTED
 }

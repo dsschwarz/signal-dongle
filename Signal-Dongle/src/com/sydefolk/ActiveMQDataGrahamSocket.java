@@ -4,6 +4,7 @@ import javax.jms.*;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,9 +17,11 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
     protected Session session;
     protected MessageConsumer consumer;
     protected MessageProducer producer;
+    Topic phoneToDongleTopic;
     protected String brokerUrl;
-    protected static final String PHONE_TO_DONGLE_TOPIC = "phone_to_dongle";
-    protected static final String DONGLE_TO_PHONE_TOPIC = "dongle_to_phone";
+    protected final int INSTANCE = 1;
+    protected final String PHONE_TO_DONGLE_TOPIC = INSTANCE == 1 ? "phone_to_dongle" : "best_phone_to_dongle_topic";
+    protected final String DONGLE_TO_PHONE_TOPIC = INSTANCE == 1 ? "dongle_to_phone" : "best_dongle_to_phone_topic";
     protected static final long TIMEOUT = 5000;
 
     private Message latestMessage = null;
@@ -27,7 +30,7 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
     public ActiveMQDataGrahamSocket() throws JMSException{
         super();
 
-        brokerUrl = "tcp://192.168.0.187:61616";
+        brokerUrl = "tcp://localhost:61616";
         lock = new Object();
         setupActiveMQ();
         consumer.setMessageListener(message -> {
@@ -48,7 +51,7 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
             connection = connectionFactory.createConnection();
             connection.start();
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Topic phoneToDongleTopic = session.createTopic(PHONE_TO_DONGLE_TOPIC);
+            phoneToDongleTopic = session.createTopic(PHONE_TO_DONGLE_TOPIC);
             Topic dongleToPhoneTopic = session.createTopic(DONGLE_TO_PHONE_TOPIC);
             // reverse of phone. Publish to dongle to phone, read from phone to dongle
             consumer = session.createConsumer(phoneToDongleTopic);
@@ -81,10 +84,12 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
             }
         }
         try {
-            Logger.getAnonymousLogger().log(Level.INFO, "Received ActiveMQ message");
+            Logger.getAnonymousLogger().log(Level.INFO, "Received ActiveMQ message (" + phoneToDongleTopic.getTopicName() + ")");
             if(latestMessage instanceof BytesMessage){
                 byte[] bytes = new byte[(int)((BytesMessage) latestMessage).getBodyLength()];
                 ((BytesMessage) latestMessage).readBytes(bytes);
+//                System.out.println(Arrays.toString(bytes));
+//                System.out.println(bytes.length);
                 return bytes;
             } else {
                 Logger.getAnonymousLogger().log(Level.WARNING, "Wrong message type");
