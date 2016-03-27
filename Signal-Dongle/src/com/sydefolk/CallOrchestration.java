@@ -24,7 +24,6 @@ public class CallOrchestration {
 
             customSocket.initiatorCallback = this::initiateCall;
             customSocket.respondCallback = this::incomingCall;
-            customSocket.answerCallback = this::acceptCall;
 
             SecureRandom.getInstance("SHA1PRNG").nextBytes(zid);
         } catch(NoSuchAlgorithmException e) {
@@ -42,10 +41,5 @@ public class CallOrchestration {
     public void incomingCall() {
         currentCallManager = new ResponderCallManager(zid, customSocket);
         currentCallManager.start();
-    }
-    public void acceptCall() {
-        if (currentCallManager instanceof  ResponderCallManager) {
-            ((ResponderCallManager) currentCallManager).answer(true);
-        }
     }
 }

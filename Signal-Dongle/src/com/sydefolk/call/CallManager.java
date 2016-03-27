@@ -73,6 +73,7 @@ public abstract class CallManager extends Thread {
 
       if (!terminated) {
         callConnected = true;
+        customSocket.callConnected(zrtpSocket.getSasInfo().getSasText());
         runAudio(customSocket, zrtpSocket.getMasterSecret(), muteEnabled);
       }
 

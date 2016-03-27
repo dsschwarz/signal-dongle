@@ -19,7 +19,5 @@ public class Main {
     }
 
     CallOrchestration callOrchestration = new CallOrchestration(socket);
-
-    callOrchestration.customSocket.initiateCall();
   }
 }

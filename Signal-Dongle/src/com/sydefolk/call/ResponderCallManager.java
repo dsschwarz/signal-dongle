@@ -51,9 +51,6 @@ public class ResponderCallManager extends CallManager {
   @Override
   public void run() {
     try {
-      if (!waitForAnswer()) {
-        return;
-      }
       secureSocket  = new SecureRtpSocket(customSocket);
 
       zrtpSocket    = new ZRTPResponderSocket(secureSocket, zid, false);
@@ -63,30 +60,8 @@ public class ResponderCallManager extends CallManager {
     }
   }
 
-  public synchronized void answer(boolean answer) {
-    this.answer = (answer ? 1 : 2);
-    notifyAll();
-  }
-
-  private synchronized boolean waitForAnswer() {
-    try {
-      while (answer == 0)
-        wait();
-    } catch (InterruptedException ie) {
-      throw new IllegalArgumentException(ie);
-    }
-
-    return this.answer == 1;
-  }
-
   @Override
   public void terminate() {
-    synchronized (this) {
-      if (answer == 0) {
-        answer(false);
-      }
-    }
-
     super.terminate();
   }
 

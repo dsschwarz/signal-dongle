@@ -3,6 +3,8 @@ package com.sydefolk;
 import com.sydefolk.network.RtpPacket;
 
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CustomSocket {
     DataGrahamSocket dataGrahamSocket;
@@ -11,8 +13,6 @@ public class CustomSocket {
 
     Callback initiatorCallback = Callback.emptyCallback();
     Callback respondCallback = Callback.emptyCallback();
-    Callback rejectCallback = Callback.emptyCallback();
-    Callback answerCallback = Callback.emptyCallback();
 
     public CustomSocket(DataGrahamSocket socket) {
         dataGrahamSocket = socket;
@@ -34,13 +34,15 @@ public class CustomSocket {
         dataGrahamSocket.send(data);
     }
 
-    public void answerCall() {
-        byte[] data = ByteBuffer.allocate(2).putShort((short) MessageTypes.ANSWER.ordinal()).array();
-        dataGrahamSocket.send(data);
-    }
+    // notify the phone that the call has been connected
+    public void callConnected(String sasText) {
+        byte[] text = sasText.getBytes();
+        byte[] data = ByteBuffer.allocate(2 + text.length)
+            .putShort((short) MessageTypes.CALL_CONNECTED.ordinal())
+            .put(text)
+            .array();
 
-    public void rejectCall() {
-        byte[] data = ByteBuffer.allocate(2).putShort((short) MessageTypes.REJECT.ordinal()).array();
+        Logger.getAnonymousLogger().log(Level.INFO, "Call connected");
         dataGrahamSocket.send(data);
     }
 
@@ -100,10 +102,6 @@ public class CustomSocket {
             initiatorCallback.doSomething();
         } else if (type == MessageTypes.RESPOND) {
             respondCallback.doSomething();
-        } else if (type == MessageTypes.ANSWER) {
-            answerCallback.doSomething();
-        } else if (type == MessageTypes.REJECT) {
-            rejectCallback.doSomething();
         } else {
             new Exception("Unknown message type " + type.toString()).printStackTrace();
         }
