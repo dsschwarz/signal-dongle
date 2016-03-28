@@ -51,9 +51,6 @@ public class CustomSocket {
             byte[] data = dataGrahamSocket.receive();
             handleNewMessage(data);
 //            Logger.getLogger(getClass().getName()).log(Level.INFO, "Message received!");
-            synchronized (lock) {
-                lock.notifyAll();
-            }
         }
     }
 
@@ -96,7 +93,7 @@ public class CustomSocket {
             buffer.get(data);
             latestData = new RtpPacket(data, packetLength);
             synchronized (lock) {
-                lock.notify(); // notify a single receive method that a packet has arrived
+                lock.notifyAll(); // notify that a packet has arrived
             }
         } else if (type == MessageTypes.INITIATE){
             initiatorCallback.doSomething();

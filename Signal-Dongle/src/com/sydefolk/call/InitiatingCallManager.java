@@ -66,7 +66,7 @@ public class InitiatingCallManager extends CallManager {
       throws SocketException, AudioException
   {
     Logger.getAnonymousLogger().log(Level.INFO, "Starting Audio");
-    this.callAudioManager = new CallAudioManager(socket, true,
+    this.callAudioManager = new CallAudioManager(socket,
                                                  masterSecret.getInitiatorSrtpKey(),
                                                  masterSecret.getInitiatorMacKey(),
                                                  masterSecret.getInitiatorSrtpSalt(),

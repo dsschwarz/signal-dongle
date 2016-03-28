@@ -24,24 +24,18 @@ public class CallAudioManager {
     private AudioOutput audioOutput = null;
     private AudioOutput encryptedAudioOutput = null;
 
-    private boolean isSender = false;
-
-    public CallAudioManager(CustomSocket socket, boolean isSender, // TODO take out this test variable
+    public CallAudioManager(CustomSocket socket,
                             byte[] senderCipherKey, byte[] senderMacKey, byte[] senderSalt,
                             byte[] receiverCipherKey, byte[] receiverMacKey, byte[] receiverSalt)
             throws SocketException, AudioException
     {
         Logger.getLogger("CallAudioManager").log(Level.INFO, "Starting audio manager");
         this.socket = socket;
-        this.isSender = isSender;
-        if (isSender) {
-            this.audioInput = new AudioInput(null);
-            this.audioInput.captureMicrophone();
-        } else {
-            Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
-            this.encryptedAudioOutput = new AudioOutput(AudioSystem.getMixer(mixerInfo[5]));
-            this.audioOutput = new AudioOutput(AudioSystem.getMixer(mixerInfo[6]));
-        }
+        this.audioInput = new AudioInput(null);
+        this.audioInput.captureMicrophone();
+        Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
+        this.encryptedAudioOutput = new AudioOutput(AudioSystem.getMixer(mixerInfo[5]));
+        this.audioOutput = new AudioOutput(AudioSystem.getMixer(mixerInfo[6]));
     }
 
     public void setMute(boolean enabled) {
@@ -50,11 +44,8 @@ public class CallAudioManager {
     public void start() throws AudioException {
         this.running = true;
 
-        if (this.isSender) {
-            (new AudioInputThread(this.audioInput)).start();
-        } else {
-            (new AudioOutputThread(this.audioOutput, this.encryptedAudioOutput)).start();
-        }
+        (new AudioInputThread(this.audioInput)).start();
+        (new AudioOutputThread(this.audioOutput, this.encryptedAudioOutput)).start();
     }
 
     public void terminate() {

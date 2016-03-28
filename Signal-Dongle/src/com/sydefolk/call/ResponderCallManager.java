@@ -72,7 +72,7 @@ public class ResponderCallManager extends CallManager {
       throws SocketException, AudioException
   {
     Logger.getAnonymousLogger().log(Level.INFO, "Starting Audio");
-    this.callAudioManager = new CallAudioManager(socket, false,
+    this.callAudioManager = new CallAudioManager(socket,
                                                  masterSecret.getResponderSrtpKey(),
                                                  masterSecret.getResponderMacKey(),
                                                  masterSecret.getResponderSrtpSailt(),

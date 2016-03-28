@@ -30,7 +30,7 @@ public class ActiveMQDataGrahamSocket extends DataGrahamSocket {
     public ActiveMQDataGrahamSocket() throws JMSException{
         super();
 
-        brokerUrl = "tcp://localhost:61616";
+        brokerUrl = "tcp://192.168.0.187:61616";
         lock = new Object();
         setupActiveMQ();
         consumer.setMessageListener(message -> {
